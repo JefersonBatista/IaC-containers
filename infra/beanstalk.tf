@@ -26,3 +26,17 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_env" {
     value     = var.max_size
   }
 }
+
+resource "aws_elastic_beanstalk_application_version" "beanstalk_app_version" {
+  depends_on = [
+    aws_elastic_beanstalk_environment.beanstalk_env,
+    aws_elastic_beanstalk_application.beanstalk_app,
+    aws_s3_object.docker_run
+  ]
+
+  name        = var.environment
+  application = var.name
+  description = var.description
+  bucket      = aws_s3_bucket.beanstalk_deploys.id
+  key         = aws_s3_object.docker_run.id
+}
